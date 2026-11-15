@@ -151,6 +151,10 @@ def build_feature_rows(
 
 
 df, ingredient_data = load_and_prepare_data(CSV_PATH, PRODUCT_INGREDIENTS_PATH)
+ingredient_options = sorted(
+    {label.strip() for label in ingredient_data["label_name"] if label.strip()},
+    key=str.casefold,
+)
 feature_vectorizer = DictVectorizer()
 feature_matrix = feature_vectorizer.fit_transform(
     build_feature_rows(df, ingredient_data)
@@ -170,6 +174,11 @@ def get_all_products():
             status_code=500, detail="Le jeu de données n'est pas chargé."
         )
     return df.to_dict(orient="records")
+
+
+@app.get("/ingredients", response_model=List[str], tags=["Catalogue"])
+def get_ingredients():
+    return ingredient_options
 
 
 @app.post(
@@ -192,16 +201,17 @@ def get_recommendations(request: RecommendationRequest):
         np.mean(cosine_sim[indices], axis=0), 3
     )
     results = results[~results["id"].isin(request.selected_ids)]
-    for ingredient in request.excluded_ingredients:
-        ingredient = str(ingredient).strip()
-        if ingredient:
-            excluded_ids = ingredient_data.loc[
-                ingredient_data["label_name"].str.contains(
-                    ingredient, case=False, na=False, regex=False
-                ),
-                "product_id",
-            ].unique()
-            results = results[~results["id"].isin(excluded_ids)]
+    excluded_labels = {
+        ingredient.strip().casefold()
+        for ingredient in request.excluded_ingredients
+        if ingredient.strip()
+    }
+    if excluded_labels:
+        excluded_ids = ingredient_data.loc[
+            ingredient_data["label_name"].str.strip().str.casefold().isin(excluded_labels),
+            "product_id",
+        ].unique()
+        results = results[~results["id"].isin(excluded_ids)]
     return results.sort_values("similarity_score", ascending=False).head(
         request.top_n
     ).to_dict(orient="records")

@@ -119,11 +119,15 @@
       <div class="ingredient-filters">
         <div class="ingredient-filter">
           <label for="excluded-ingredient-1">Ingrédient à éviter (facultatif)</label>
-          <input id="excluded-ingredient-1" class="field" type="text" maxlength="100" placeholder="Ex. parfum">
+          <select id="excluded-ingredient-1" class="field">
+            <option value="">Aucun ingrédient</option>
+          </select>
         </div>
         <div class="ingredient-filter">
           <label for="excluded-ingredient-2">Deuxième ingrédient à éviter (facultatif)</label>
-          <input id="excluded-ingredient-2" class="field" type="text" maxlength="100" placeholder="Ex. alcool dénaturé">
+          <select id="excluded-ingredient-2" class="field">
+            <option value="">Aucun ingrédient</option>
+          </select>
         </div>
       </div>
 
@@ -168,6 +172,7 @@
     const MAX_SELECTED = 5;
     const productsById = new Map();
     let products = [];
+    let ingredients = [];
     let selectedIds = [];
     const categoryLabels = {
       "body/bath": "Corps et bain",
@@ -266,15 +271,26 @@
       const catalogue = document.getElementById("catalogue");
       catalogue.innerHTML = `<div class="loading">Chargement des produits…</div>`;
       try {
-        const response = await fetch("/products");
-        if (!response.ok) throw new Error(`Impossible de charger les produits (${response.status}).`);
-        products = await response.json();
+        const [productsResponse, ingredientsResponse] = await Promise.all([
+          fetch("/products"),
+          fetch("/ingredients")
+        ]);
+        if (!productsResponse.ok) throw new Error(`Impossible de charger les produits (${productsResponse.status}).`);
+        if (!ingredientsResponse.ok) throw new Error(`Impossible de charger les ingrédients (${ingredientsResponse.status}).`);
+        [products, ingredients] = await Promise.all([
+          productsResponse.json(),
+          ingredientsResponse.json()
+        ]);
         products.forEach((product) => productsById.set(product.id, product));
         const categories = [...new Set(products.map((product) => product.category).filter(Boolean))].sort();
         document.getElementById("category").insertAdjacentHTML(
           "beforeend",
           categories.map((item) => `<option value="${escapeHtml(item)}">${escapeHtml(formatCategory(item))}</option>`).join("")
         );
+        const ingredientOptions = ingredients.map((ingredient) => `<option value="${escapeHtml(ingredient)}">${escapeHtml(ingredient)}</option>`).join("");
+        for (const id of ["excluded-ingredient-1", "excluded-ingredient-2"]) {
+          document.getElementById(id).insertAdjacentHTML("beforeend", ingredientOptions);
+        }
         renderCatalogue();
       } catch (error) {
         document.getElementById("catalogue").innerHTML = "";
@@ -299,7 +315,7 @@
           body: JSON.stringify({
             selected_ids: selectedIds,
             excluded_ingredients: ["excluded-ingredient-1", "excluded-ingredient-2"]
-              .map((id) => document.getElementById(id).value.trim())
+              .map((id) => document.getElementById(id).value)
               .filter(Boolean),
             top_n: 12
           })
@@ -336,6 +352,14 @@
 
     document.getElementById("search").addEventListener("input", renderCatalogue);
     document.getElementById("category").addEventListener("change", renderCatalogue);
+    for (const id of ["excluded-ingredient-1", "excluded-ingredient-2"]) {
+      document.getElementById(id).addEventListener("change", () => {
+        const otherId = id === "excluded-ingredient-1" ? "excluded-ingredient-2" : "excluded-ingredient-1";
+        const current = document.getElementById(id);
+        const other = document.getElementById(otherId);
+        if (current.value && current.value === other.value) other.value = "";
+      });
+    }
     document.getElementById("recommend-button").addEventListener("click", showRecommendations);
     document.getElementById("back-button").addEventListener("click", (event) => {
       event.preventDefault();
