@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f6f5f0">
-  <title>Beauty Match — Find your next favorite</title>
+  <title>Cosm'éthique — Trouvez vos produits préférés</title>
   <style>
     :root {
       color-scheme: light;
@@ -24,10 +24,9 @@
     button, input, select { font: inherit; }
     button { cursor: pointer; }
     .shell { max-width: 1180px; margin: 0 auto; padding: 28px 28px 64px; }
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 48px; }
-    .brandmark { font-size: 15px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
-    .brandmark span { color: var(--green); }
-    .step-label { color: var(--muted); font-size: 13px; }
+    header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; margin-bottom: 48px; }
+    .brandmark { grid-column: 2; color: var(--green); font-family: Georgia, "Times New Roman", serif; font-size: 25px; font-weight: 700; letter-spacing: .02em; text-align: center; }
+    .step-label { grid-column: 3; justify-self: end; color: var(--muted); font-size: 13px; }
     .hero { max-width: 720px; margin: 0 auto 34px; text-align: center; }
     .eyebrow { color: var(--green); font-size: 12px; font-weight: 750; letter-spacing: .15em; text-transform: uppercase; }
     h1 { margin: 12px 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(36px, 5vw, 58px); font-weight: 500; letter-spacing: -.04em; line-height: 1.04; }
@@ -80,7 +79,9 @@
     @media (max-width: 900px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
     @media (max-width: 640px) {
       .shell { padding: 20px 16px 48px; }
-      header { margin-bottom: 34px; }
+      header { grid-template-columns: 1fr; gap: 8px; margin-bottom: 34px; }
+      .brandmark { grid-column: 1; grid-row: 1; }
+      .step-label { grid-column: 1; grid-row: 2; justify-self: center; }
       .toolbar { grid-template-columns: 1fr; }
       .grid, .results-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; }
       .product-info { padding: 11px; }
@@ -94,21 +95,21 @@
 <body>
   <main class="shell">
     <header>
-      <div class="brandmark">Beauty <span>Match</span></div>
-      <div class="step-label" id="step-label">Step 1 of 2 · Choose products</div>
+      <div class="brandmark">Cosm'éthique</div>
+      <div class="step-label" id="step-label">Étape 1 sur 2 · Choisir des produits</div>
     </header>
 
     <section id="picker-view">
       <div class="hero">
-        <div class="eyebrow">A routine that feels like you</div>
-        <h1>Find your next<br>beauty favorite.</h1>
-        <p>Choose up to five products you already love. We’ll find similar formulas from the catalogue.</p>
+        <div class="eyebrow">Une routine qui vous ressemble</div>
+        <h1>Trouvez vos prochains<br>produits préférés.</h1>
+        <p>Choisissez jusqu'à cinq produits que vous aimez déjà. Nous trouverons des formules similaires dans le catalogue.</p>
       </div>
 
       <div class="toolbar">
-        <input id="search" class="field" type="search" placeholder="Search products or brands…" aria-label="Search products">
-        <select id="category" class="field" aria-label="Filter by category">
-          <option value="">All categories</option>
+        <input id="search" class="field" type="search" placeholder="Rechercher un produit ou une marque…" aria-label="Rechercher des produits">
+        <select id="category" class="field" aria-label="Filtrer par catégorie">
+          <option value="">Toutes les catégories</option>
         </select>
       </div>
 
@@ -116,36 +117,36 @@
         <div class="selection-info">
           <div class="count" id="selection-count">0</div>
           <div>
-            <strong>Products selected</strong>
-            <small>Choose between 1 and 5</small>
+            <strong>Produits sélectionnés</strong>
+            <small>Choisissez entre 1 et 5 produits</small>
             <div class="selected-list" id="selected-list"></div>
           </div>
         </div>
-        <button id="recommend-button" class="primary" disabled>See matches →</button>
+        <button id="recommend-button" class="primary" disabled>Voir les recommandations →</button>
       </div>
 
       <div class="section-heading">
-        <h2>Explore the catalogue</h2>
+        <h2>Explorer le catalogue</h2>
         <span id="product-count"></span>
       </div>
       <div id="error-message" class="error" role="alert" hidden></div>
       <div id="catalogue" class="grid"></div>
-      <div id="empty-state" class="notice" hidden>No products match your search. Try another name or category.</div>
+      <div id="empty-state" class="notice" hidden>Aucun produit ne correspond à votre recherche. Essayez un autre nom ou une autre catégorie.</div>
     </section>
 
     <section id="results-view" hidden>
-      <a href="#" class="back-link" id="back-button">← Back to your selection</a>
+      <a href="#" class="back-link" id="back-button">← Retour à votre sélection</a>
       <div class="results-head">
         <div>
-          <div class="eyebrow">Curated for you</div>
-          <h1>Your beauty matches.</h1>
-          <p>Products with similar ingredients and product types.</p>
+          <div class="eyebrow">Une sélection pour vous</div>
+          <h1>Vos recommandations.</h1>
+          <p>Des produits aux ingrédients et aux types similaires.</p>
         </div>
       </div>
       <div id="results-error" class="error" role="alert" hidden></div>
-      <div id="results-loading" class="loading" hidden>Finding your closest matches…</div>
+      <div id="results-loading" class="loading" hidden>Recherche de vos meilleures correspondances…</div>
       <div id="recommendations" class="grid results-grid"></div>
-      <div id="no-recommendations" class="notice" hidden>We couldn’t find similar products for this selection yet.</div>
+      <div id="no-recommendations" class="notice" hidden>Aucun produit similaire n'a été trouvé pour cette sélection.</div>
     </section>
   </main>
 
@@ -154,32 +155,71 @@
     const productsById = new Map();
     let products = [];
     let selectedIds = [];
+    const categoryLabels = {
+      "body/bath": "Corps et bain",
+      deodorants: "Déodorants",
+      devices: "Appareils",
+      fragrance: "Parfums",
+      haircare: "Soins capillaires",
+      makeup: "Maquillage",
+      "oral-care": "Hygiène bucco-dentaire",
+      other: "Autres",
+      skincare: "Soins de la peau",
+      suncare: "Soins solaires",
+      tools_accessories: "Outils et accessoires"
+    };
+    const subcategoryLabels = {
+      bath: "Bain",
+      cleanser: "Nettoyant",
+      concealer: "Correcteur",
+      cream: "Crème",
+      deodorant: "Déodorant",
+      "eau de": "Eau de",
+      exfoliator: "Exfoliant",
+      eyeshadow: "Fard à paupières",
+      "eye care": "Soin des yeux",
+      "face mask": "Masque pour le visage",
+      "face oil": "Huile pour le visage",
+      fragrance: "Parfum",
+      foundation: "Fond de teint",
+      "lip care": "Soin des lèvres",
+      lipstick: "Rouge à lèvres",
+      moisturizer: "Hydratant",
+      scalp: "Cuir chevelu",
+      serum: "Sérum",
+      shampoo: "Shampoing",
+      skin: "Peau",
+      "spot treatment": "Soin ciblé",
+      "toner / essence": "Lotion tonique / essence"
+    };
 
     const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
     })[char]);
+    const formatCategory = (category) => categoryLabels[category] || category.replaceAll("_", " ");
+    const formatSubcategory = (subcategory) => subcategoryLabels[subcategory.toLocaleLowerCase()] || subcategory;
 
     function productImage(product, extraClass = "") {
-      if (!product.image_name) return `<div class="image-placeholder">Image unavailable</div>`;
+      if (!product.image_name) return `<div class="image-placeholder">Image indisponible</div>`;
       const url = `/images/${encodeURIComponent(product.image_name)}`;
-      return `<img class="${extraClass}" src="${url}" alt="${escapeHtml(product.name || "Product")}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'), {className:'image-placeholder', textContent:'Image unavailable'}))">`;
+      return `<img class="${extraClass}" src="${url}" alt="${escapeHtml(product.name || "Produit")}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'), {className:'image-placeholder', textContent:'Image indisponible'}))">`;
     }
 
     function productCard(product, recommendation = false) {
       const selected = selectedIds.includes(product.id);
-      const label = [product.category, product.subcategory].filter(Boolean).join(" · ");
+      const label = [product.category ? formatCategory(product.category) : "", product.subcategory ? formatSubcategory(product.subcategory) : ""].filter(Boolean).join(" · ");
       const similarity = Number.isFinite(Number(product.similarity_score))
-        ? `<div class="similarity">${Math.round(Number(product.similarity_score) * 100)}% match</div>`
+        ? `<div class="similarity">${Math.round(Number(product.similarity_score) * 100)} % de similarité</div>`
         : "";
       const action = recommendation
         ? similarity
-        : `<button class="add-button ${selected ? "selected" : ""}" data-product-id="${product.id}" ${selected || selectedIds.length >= MAX_SELECTED ? "disabled" : ""}>${selected ? "Added ✓" : "＋ Add to selection"}</button>`;
+        : `<button class="add-button ${selected ? "selected" : ""}" data-product-id="${product.id}" ${selected || selectedIds.length >= MAX_SELECTED ? "disabled" : ""}>${selected ? "Ajouté ✓" : "＋ Ajouter à la sélection"}</button>`;
 
       return `<article class="product-card">
         <div class="product-image ${recommendation ? "recommendation-image" : ""}">${productImage(product)}</div>
         <div class="product-info">
-          <p class="product-brand">${escapeHtml(product.brand || "Beauty product")}</p>
-          <h3 class="product-name">${escapeHtml(product.name || "Unnamed product")}</h3>
+          <p class="product-brand">${escapeHtml(product.brand || "Marque non renseignée")}</p>
+          <h3 class="product-name">${escapeHtml(product.name || "Produit sans nom")}</h3>
           <div class="product-meta">${label ? `<span class="tag">${escapeHtml(label)}</span>` : ""}${product.size ? `<span class="tag">${escapeHtml(product.size)}</span>` : ""}</div>
           ${action}
         </div>
@@ -192,7 +232,7 @@
       document.getElementById("selected-list").innerHTML = selectedIds.map((id) => {
         const product = productsById.get(id);
         const name = product ? `${product.brand ? product.brand + " · " : ""}${product.name}` : id;
-        return `<button class="selected-chip" data-remove-id="${id}" aria-label="Remove ${escapeHtml(name)}">${escapeHtml(name)} ×</button>`;
+        return `<button class="selected-chip" data-remove-id="${id}" aria-label="Retirer ${escapeHtml(name)}">${escapeHtml(name)} ×</button>`;
       }).join("");
     }
 
@@ -203,29 +243,29 @@
         const searchText = `${product.name || ""} ${product.brand || ""}`.toLocaleLowerCase();
         return (!query || searchText.includes(query)) && (!category || product.category === category);
       }).slice(0, 60);
-      document.getElementById("product-count").textContent = `${matching.length}${matching.length === 60 ? "+" : ""} products`;
+      document.getElementById("product-count").textContent = `${matching.length}${matching.length === 60 ? "+" : ""} produits`;
       document.getElementById("catalogue").innerHTML = matching.map((product) => productCard(product)).join("");
       document.getElementById("empty-state").hidden = matching.length !== 0;
     }
 
     async function loadProducts() {
       const catalogue = document.getElementById("catalogue");
-      catalogue.innerHTML = `<div class="loading">Loading products…</div>`;
+      catalogue.innerHTML = `<div class="loading">Chargement des produits…</div>`;
       try {
         const response = await fetch("/products");
-        if (!response.ok) throw new Error(`Could not load products (${response.status}).`);
+        if (!response.ok) throw new Error(`Impossible de charger les produits (${response.status}).`);
         products = await response.json();
         products.forEach((product) => productsById.set(product.id, product));
         const categories = [...new Set(products.map((product) => product.category).filter(Boolean))].sort();
         document.getElementById("category").insertAdjacentHTML(
           "beforeend",
-          categories.map((item) => `<option value="${escapeHtml(item)}">${escapeHtml(item.replaceAll("_", " "))}</option>`).join("")
+          categories.map((item) => `<option value="${escapeHtml(item)}">${escapeHtml(formatCategory(item))}</option>`).join("")
         );
         renderCatalogue();
       } catch (error) {
         document.getElementById("catalogue").innerHTML = "";
         const message = document.getElementById("error-message");
-        message.textContent = error.message || "Something went wrong while loading products.";
+        message.textContent = error.message || "Une erreur est survenue lors du chargement des produits.";
         message.hidden = false;
       }
     }
@@ -233,7 +273,7 @@
     async function showRecommendations() {
       document.getElementById("picker-view").hidden = true;
       document.getElementById("results-view").hidden = false;
-      document.getElementById("step-label").textContent = "Step 2 of 2 · Your matches";
+      document.getElementById("step-label").textContent = "Étape 2 sur 2 · Vos recommandations";
       document.getElementById("recommendations").innerHTML = "";
       document.getElementById("results-error").hidden = true;
       document.getElementById("no-recommendations").hidden = true;
@@ -245,12 +285,12 @@
           body: JSON.stringify({ selected_ids: selectedIds, top_n: 12 })
         });
         const data = await response.json();
-        if (!response.ok) throw new Error(data.detail || `Could not get recommendations (${response.status}).`);
+        if (!response.ok) throw new Error(data.detail || `Impossible d'obtenir les recommandations (${response.status}).`);
         document.getElementById("recommendations").innerHTML = data.map((product) => productCard(product, true)).join("");
         document.getElementById("no-recommendations").hidden = data.length !== 0;
       } catch (error) {
         const message = document.getElementById("results-error");
-        message.textContent = error.message || "Something went wrong while finding matches.";
+        message.textContent = error.message || "Une erreur est survenue lors de la recherche de recommandations.";
         message.hidden = false;
       } finally {
         document.getElementById("results-loading").hidden = true;
@@ -281,7 +321,7 @@
       event.preventDefault();
       document.getElementById("results-view").hidden = true;
       document.getElementById("picker-view").hidden = false;
-      document.getElementById("step-label").textContent = "Step 1 of 2 · Choose products";
+      document.getElementById("step-label").textContent = "Étape 1 sur 2 · Choisir des produits";
     });
 
     renderSelected();
