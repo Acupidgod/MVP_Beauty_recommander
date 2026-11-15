@@ -25,7 +25,9 @@ class RecommendationRequest(BaseModel):
         ..., min_items=1, max_items=5, description="De 1 à 5 identifiants de produits"
     )
     excluded_ingredients: List[str] = Field(
-        default_factory=list, description="Ingrédients à exclure"
+        default_factory=list,
+        max_length=2,
+        description="Jusqu'à 2 ingrédients à exclure des recommandations",
     )
     top_n: int = Field(default=3, ge=1, le=20)
 
